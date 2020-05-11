@@ -1,0 +1,135 @@
+print('-----------------------')
+print('Welcome to Tic Tac Toe!')
+import random
+l=['#',' ',' ',' ',' ',' ',' ',' ',' ',' ']
+def print_board(l):
+    for i in range(7,0,-3):
+        print(' | | ')
+        for j in range(i,i+3):
+            if j<i+2:
+                print(l[j],end='|')
+            else:
+                print(l[j])
+        if i>1:
+            print('_|_|_')
+        else:
+            print(' | | ')
+def user_move(l,c):
+    pos=int(input('Please select a position from[1,9] \n'))
+    remain=[]
+    for x, letter in enumerate(l):
+        if letter==" ":
+            remain.append(x)
+    if pos<10 and pos in remain:
+        return pos
+    else:
+        print('Position is already occupied')
+        user_move(l,c)
+def win_check(l,c,res,user,comp):
+    if l[7]==l[8]==l[9]==c or l[7]==l[4]==l[1]==c or l[7]==l[5]==l[3]==c or l[4]==l[5]==l[6]==c or l[9]==l[6]==l[3]==c or l[1]==l[2]==l[3]==c or l[9]==l[5]==l[1]==c or l[8]==l[5]==l[2]==c:
+        if c.upper()==user:
+            res=2
+            return res
+        elif c.upper()==comp:
+            res=3
+            return res
+    else:
+        return res
+def comp_move(l,c,u):
+    remain=[]
+    for x, letter in enumerate(l):
+        if letter==" ":
+            remain.append(x)
+    for let in (c,u):
+        for i in remain:
+            l1=l.copy()
+            l1[i]=let
+            if win_check(l1,let,1,u,c) in[2,3]:
+                pos=i
+                return pos
+    corner=[]
+    for i in remain:
+        if i in [1,3,7,9]:
+            corner.append(i)
+    if len(corner)>0:
+        pos=random.choice(corner)
+    elif 5 in remain:
+            pos=5
+    else:
+        mid=[]
+        for i in remain:
+            if i in [2,4,6,8]:
+                mid.append(i)
+        if len(mid)>0:
+            pos=random.choice(mid)
+
+    return pos
+def play_game(l,ready):
+    token=["Player","Computer"];s=1
+    if ready=="Y":
+        while True:
+            user=input("Do you want to be X or O? \n").upper()
+            if user=='X' or user=='O':
+                if user=='X':
+                    comp='O'
+                else:
+                    comp='X'
+                break
+            else:
+                print('Enter valid input')
+                continue
+        first=random.choice(token)
+        print(first+" will go first")
+        if first=="Player":
+            print_board(l)
+            s=2
+        elif first=="Computer":
+            s=3
+        i=1
+        while i<10:
+            if s==2:
+                pos=user_move(l,user)
+                l[pos]=user
+                res=win_check(l,user,1,user,comp)
+                print('You played at position '+str(pos))
+                print_board(l)
+                if res==2:
+                    print('Congratulations to Player '+user+' you have won the game')
+                    i=10
+                s+=1
+            elif s==3:
+                pos=comp_move(l,comp,user)
+                l[pos]=comp
+                print('Computer played at position '+str(pos))
+                print_board(l)
+                res=win_check(l,comp,1,user,comp)
+                if res==3:
+                    print('Bad luck,Computer won the game')
+                    i=10
+                s-=1
+            if i==9 and res==1:
+                print('Game Tied')
+            i+=1
+        b=True
+        while b:
+            again=input("Do you want to play again? Enter Y for YES and N for NO \n").upper()
+            if again=='Y' or again=="N":
+                if again=='Y':
+                    l=['#',' ',' ',' ',' ',' ',' ',' ',' ',' ']
+                    play_game(l,'Y')
+                else:
+                    b=False
+                    print('Thank u for playing come again')
+            else:
+                print("Enter valid input")
+                continue
+    else:
+        print('Thank u come again when u r ready')
+while True:
+    ready=input('Are you ready to play? Enter Y for YES and N for NO \n')
+    if ready.upper()=="Y" or ready.upper()=="N":
+        play_game(l,ready.upper())
+        break
+    else:
+        print('Please Give Valid Input')
+        continue
